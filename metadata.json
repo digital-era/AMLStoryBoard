@@ -1,0 +1,5 @@
+{
+  "name": "AI Storyboard Generator",
+  "description": "A web application that generates a visual storyboard from a movie script using Gemini AI.",
+  "requestFramePermissions": []
+}
