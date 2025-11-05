@@ -11,6 +11,9 @@ const getAi = (apiKey: string | undefined) => {
     if (!apiKey) {
         throw new Error("API_KEY is not provided.");
     }
+    // After the check, TypeScript knows apiKey is a string.
+    // If it didn't, you might need a type assertion:
+    // return new GoogleGenAI({ apiKey: apiKey as string });
     return new GoogleGenAI({ apiKey });
 }
 
@@ -22,7 +25,7 @@ const getAi = (apiKey: string | undefined) => {
  * @throws Error 如果 API_KEY 未提供，或者图像生成失败。
  */
 export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey: string | undefined): Promise<string> => {
-    const ai = getAi(apiKey); // 现在这里会检查 apiKey 是否为 undefined
+    const ai = getAi(apiKey); // 调用 getAi 时，如果 apiKey 是 undefined，会在内部抛出错误
     const prompt = `Translate the following movie scene description into a detailed, visually rich English prompt for an image generation model. The prompt should be a single paragraph. Add cinematic keywords like "cinematic lighting", "epic scale", "photorealistic", "4k", "high detail". Scene: "${sceneDescription}"`;
 
     const response = await ai.models.generateContent({
@@ -41,7 +44,7 @@ export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey
  * @throws Error 如果 API_KEY 未提供，或者图像生成失败。
  */
 export const generateImageFromPrompt = async (prompt: string, apiKey: string | undefined): Promise<string> => {
-    const ai = getAi(apiKey); // 现在这里会检查 apiKey 是否为 undefined
+    const ai = getAi(apiKey); // 调用 getAi 时，如果 apiKey 是 undefined，会在内部抛出错误
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: {
