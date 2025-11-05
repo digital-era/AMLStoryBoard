@@ -67,12 +67,15 @@ const parseScript = (script: string): { scene: string; description: string }[] =
     return scenes;
 };
 
+const [apiKey, setApiKey] = useState<string>(() => {
+      const envApiKey = import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY;
+      if (typeof envApiKey === 'string' && envApiKey.length > 0) {
+        return envApiKey;
+      }
+      console.warn("VITE_GOOGLE_AI_STUDIO_API_KEY is not set or is empty. Please check your .env file.");
+      return '';
+  });
 
-const App: React.FC = () => {
-  const [script, setScript] = useState<string>(SCRIPT_CONTENT);
-  const [apiKey, setApiKey] = useState<string>(
-    import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY || '' 
-  );
   const [storyboard, setStoryboard] = useState<StoryboardItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
