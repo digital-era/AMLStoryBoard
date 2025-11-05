@@ -1,14 +1,28 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
-const getAi = (apiKey: string) => {
+/**
+ * 初始化 GoogleGenAI 实例。
+ * 如果 apiKey 未提供，则抛出错误。
+ * @param apiKey Google AI Studio 的 API 密钥，可以是 undefined。
+ * @returns GoogleGenAI 实例。
+ * @throws Error 如果 API_KEY 未提供。
+ */
+const getAi = (apiKey: string | undefined) => {
     if (!apiKey) {
         throw new Error("API_KEY is not provided.");
     }
     return new GoogleGenAI({ apiKey });
 }
 
-export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey: string): Promise<string> => {
-    const ai = getAi(apiKey);
+/**
+ * 根据电影场景描述创建详细的图像生成提示。
+ * @param sceneDescription 电影场景的描述。
+ * @param apiKey Google AI Studio 的 API 密钥，可以是 undefined。
+ * @returns 增强后的图像生成提示字符串。
+ * @throws Error 如果 API_KEY 未提供，或者图像生成失败。
+ */
+export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey: string | undefined): Promise<string> => {
+    const ai = getAi(apiKey); // 现在这里会检查 apiKey 是否为 undefined
     const prompt = `Translate the following movie scene description into a detailed, visually rich English prompt for an image generation model. The prompt should be a single paragraph. Add cinematic keywords like "cinematic lighting", "epic scale", "photorealistic", "4k", "high detail". Scene: "${sceneDescription}"`;
 
     const response = await ai.models.generateContent({
@@ -19,8 +33,15 @@ export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey
     return response.text;
 };
 
-export const generateImageFromPrompt = async (prompt: string, apiKey: string): Promise<string> => {
-    const ai = getAi(apiKey);
+/**
+ * 根据给定的提示生成图像。
+ * @param prompt 用于生成图像的详细提示。
+ * @param apiKey Google AI Studio 的 API 密钥，可以是 undefined。
+ * @returns 生成图像的 Base64 编码数据字符串。
+ * @throws Error 如果 API_KEY 未提供，或者图像生成失败。
+ */
+export const generateImageFromPrompt = async (prompt: string, apiKey: string | undefined): Promise<string> => {
+    const ai = getAi(apiKey); // 现在这里会检查 apiKey 是否为 undefined
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: {
