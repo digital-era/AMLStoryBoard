@@ -1,19 +1,26 @@
-// src/services/geminiService.ts (NO CHANGES needed here, keep it like this)
+// src/services/geminiService.ts
 import { GoogleGenAI, Modality } from "@google/genai";
 
-const getAi = (apiKey: string) => { // Must be string
+const getAi = (apiKey: string) => {
+    // 这里的 apiKey 已经被你的 App.tsx 确保是 string
+    // 如果仍然报错，那么是编译器对 import.meta.env 的处理问题，
+    // 或者其他地方误用了 process.env。
     return new GoogleGenAI({ apiKey });
 }
 
-export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey: string): Promise<string> => { // Must be string
-    const ai = getAi(apiKey);
+export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey: string): Promise<string> => {
+    // 在这里，TypeScript 编译器在 App.tsx 传递 apiKey 之前，就应该知道它是 string。
+    // 但是如果 tsc 报错，可能因为某种原因它在编译 geminiService.ts 时，
+    // 无法“预知” apiKey 会是一个确定的 string。
+    // 临时解决方案：强制断言
+    const ai = getAi(apiKey as string); // 强制断言
     const prompt = `Translate the following movie scene description into a detailed, visually rich English prompt for an image generation model. The prompt should be a single paragraph. Add cinematic keywords like "cinematic lighting", "epic scale", "photorealistic", "4k", "high detail". Scene: "${sceneDescription}"`;
     const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
     return response.text;
 };
 
-export const generateImageFromPrompt = async (prompt: string, apiKey: string): Promise<string> => {  // Must be string
-    const ai = getAi(apiKey);
+export const generateImageFromPrompt = async (prompt: string, apiKey: string): Promise<string> => {
+    const ai = getAi(apiKey as string); // 强制断言
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: { parts: [{ text: prompt }] },
