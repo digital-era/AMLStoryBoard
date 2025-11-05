@@ -68,15 +68,23 @@ const parseScript = (script: string): { scene: string; description: string }[] =
 };
 
 
-const App: React.FC = () => { // <--- Functional component starts here!
+const App: React.FC = () => {
   const [script, setScript] = useState<string>(SCRIPT_CONTENT);
 
-  // **** MOVE ALL THESE HOOKS AND COMPONENT-LEVEL STATE/FUNCTIONS INSIDE App ****
   const [apiKey, setApiKey] = useState<string>(() => {
       const envApiKey = import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY;
+
+      // ===================================================================
+      // =======================   这是最终的修复   ========================
+      // ===================================================================
+      // 在这里进行类型断言。
+      // 我们在 GitHub Actions 中通过 Secret 保证了 VITE_GOOGLE_AI_STUDIO_API_KEY 的存在，
+      // 所以在这里可以安全地告诉 TypeScript 编译器它一定是 string。
       if (typeof envApiKey === 'string' && envApiKey.length > 0) {
-        return envApiKey;
+        return envApiKey as string; // 明确断言为 string
       }
+      // ===================================================================
+
       console.warn("VITE_GOOGLE_AI_STUDIO_API_KEY is not set or is empty. Please check your .env file.");
       return '';
   });
@@ -220,7 +228,7 @@ const App: React.FC = () => { // <--- Functional component starts here!
       </main>
     </div>
   );
-}; // <--- App functional component ends here
+};
 
 const StoryboardCard: React.FC<{ item: StoryboardItem }> = ({ item }) => (
     <div className="bg-gray-800/50 rounded-2xl p-4 shadow-xl border border-gray-700 flex flex-col md:flex-row gap-4">
