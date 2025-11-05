@@ -1,7 +1,6 @@
 // src/services/geminiService.ts (NO CHANGES needed here, keep it like this)
 import { GoogleGenAI, Modality } from "@google/genai";
 
-
 const getAi = (apiKey: string) => { // Must be string
     return new GoogleGenAI({ apiKey });
 }
@@ -13,7 +12,7 @@ export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey
     return response.text;
 };
 
-export const generateImageFromPrompt = async (prompt: string, apiKey: string): Promise<string> => { // Must be string
+export const generateImageFromPrompt = async (prompt: string, apiKey: string): Promise<string> => {  // Must be string
     const ai = getAi(apiKey);
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
