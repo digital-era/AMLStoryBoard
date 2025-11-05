@@ -2,13 +2,14 @@ import { GoogleGenAI, Modality } from "@google/genai";
 
 /**
  * 初始化 GoogleGenAI 实例。
- * @param apiKey Google AI Studio 的 API 密钥。此参数必须是字符串，且不能为 undefined。
+ * @param apiKey Google AI Studio 的 API 密钥。此参数必须是字符串。
  * @returns GoogleGenAI 实例。
  */
 const getAi = (apiKey: string) => {
-    // 这里不再需要检查 apiKey 是否为 undefined，因为 TypeScript 已经保证了它是 string。
-    // 如果在调用此函数之前未确保 apiKey 是 string，TypeScript 会在编译时报错。
-    return new GoogleGenAI({ apiKey });
+    // Explicitly assert apiKey as string to completely satisfy TypeScript,
+    // although logically, it should already be a string here due to function parameter typing.
+    // This is a "belt and suspenders" approach to bypass the compiler's strictness.
+    return new GoogleGenAI({ apiKey: apiKey as string });
 }
 
 /**
@@ -19,7 +20,7 @@ const getAi = (apiKey: string) => {
  * @throws Error 如果图像生成失败。
  */
 export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey: string): Promise<string> => {
-    const ai = getAi(apiKey); // apiKey 已经被保证是 string
+    const ai = getAi(apiKey);
     const prompt = `Translate the following movie scene description into a detailed, visually rich English prompt for an image generation model. The prompt should be a single paragraph. Add cinematic keywords like "cinematic lighting", "epic scale", "photorealistic", "4k", "high detail". Scene: "${sceneDescription}"`;
 
     const response = await ai.models.generateContent({
@@ -38,7 +39,7 @@ export const createEnhancedImagePrompt = async (sceneDescription: string, apiKey
  * @throws Error 如果图像生成失败。
  */
 export const generateImageFromPrompt = async (prompt: string, apiKey: string): Promise<string> => {
-    const ai = getAi(apiKey); // apiKey 已经被保证是 string
+    const ai = getAi(apiKey);
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: {
