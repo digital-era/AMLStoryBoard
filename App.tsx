@@ -70,12 +70,17 @@ const parseScript = (script: string): { scene: string; description: string }[] =
 
 const App: React.FC = () => {
   const [script, setScript] = useState<string>(SCRIPT_CONTENT);
+  const [apiKey, setApiKey] = useState<string>('');
   const [storyboard, setStoryboard] = useState<StoryboardItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<string>('');
 
   const handleGenerate = useCallback(async () => {
+    if (!apiKey) {
+      setError("Please enter your Google AI Studio API Key.");
+      return;
+    }
     setIsLoading(true);
     setError(null);
     setStoryboard([]);
@@ -93,10 +98,10 @@ const App: React.FC = () => {
         for (let i = 0; i < scenes.length; i++) {
             const scene = scenes[i];
             setProgress(`Generating scene ${i + 1}/${scenes.length}: Creating image prompt...`);
-            const enhancedPrompt = await createEnhancedImagePrompt(scene.description);
+            const enhancedPrompt = await createEnhancedImagePrompt(scene.description, apiKey);
             
             setProgress(`Generating scene ${i + 1}/${scenes.length}: Creating image...`);
-            const base64Image = await generateImageFromPrompt(enhancedPrompt);
+            const base64Image = await generateImageFromPrompt(enhancedPrompt, apiKey);
             
             const newItem: StoryboardItem = {
                 ...scene,
@@ -112,9 +117,9 @@ const App: React.FC = () => {
       setIsLoading(false);
       setProgress('');
     }
-  }, [script]);
+  }, [script, apiKey]);
   
-  const isButtonDisabled = isLoading || !script.trim();
+  const isButtonDisabled = isLoading || !script.trim() || !apiKey.trim();
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col p-4 sm:p-6 lg:p-8">
@@ -137,12 +142,30 @@ const App: React.FC = () => {
             <label htmlFor="script" className="block text-sm font-medium text-gray-300 mb-2">1. Your Script</label>
             <textarea
               id="script"
-              rows={18}
+              rows={12}
               className="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all placeholder-gray-500 font-mono text-sm"
               placeholder="Paste your script here..."
               value={script}
               onChange={(e) => setScript(e.target.value)}
             />
+          </div>
+
+          <div>
+            <label htmlFor="api-key" className="block text-sm font-medium text-gray-300 mb-2">2. Your API Key</label>
+             <input
+                id="api-key"
+                type="password"
+                className="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all placeholder-gray-500 font-mono text-sm"
+                placeholder="Enter your Google AI Studio API Key"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Get your key from{" "}
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">
+                  Google AI Studio
+                </a>.
+              </p>
           </div>
           
           <button
@@ -167,7 +190,7 @@ const App: React.FC = () => {
                 <div className="flex flex-col items-center justify-center h-full min-h-[50vh] bg-gray-800/50 rounded-2xl border-2 border-dashed border-gray-700 p-8">
                     <FilmIcon className="w-16 h-16 text-gray-600"/>
                     <h2 className="mt-4 text-2xl font-semibold text-gray-400">Your Storyboard Appears Here</h2>
-                    <p className="text-gray-500 mt-1">Paste a script and click "Generate Storyboard" to begin.</p>
+                    <p className="text-gray-500 mt-1">Enter your API key and a script, then click "Generate" to begin.</p>
                 </div>
             )}
              {storyboard.length > 0 && (
