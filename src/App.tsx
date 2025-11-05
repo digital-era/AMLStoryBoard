@@ -70,7 +70,9 @@ const parseScript = (script: string): { scene: string; description: string }[] =
 
 const App: React.FC = () => {
   const [script, setScript] = useState<string>(SCRIPT_CONTENT);
-  const [apiKey, setApiKey] = useState<string>('');
+  const [apiKey, setApiKey] = useState<string>(
+    import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY || '' 
+  );
   const [storyboard, setStoryboard] = useState<StoryboardItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
