@@ -11,11 +11,11 @@ const SCRIPT_CONTENT = `**电影剧本：千年之恋**
 **2. 内景 - 咖啡馆 - 白天**
 
 [画面：露天咖啡馆里，玛丽坐在桌前，全息设计板上流淌着柔和的建筑草图，但她的眉头紧锁，显然陷入瓶颈。她不时抬头，试图从冰冷的城市中寻找灵感。]
-[特写：迈克的眼睛，数据流在他眼中飞速闪过，各种关于“美”的定义被唤醒、比对、分析，最终定格在玛丽身上。]
+[特写：迈克的眼睛，数据流在他眼中飞速闪过，各种关于“美”的定义被唤醒、比对、分析, 最终定格在玛丽身上。]
 
 **4. 外景 - 科技艺术展 - 夜晚**
 
-[画面：灯光璀璨的展厅，精英云集。亨利·卡森，西装革履，自信优雅，径直走向玛丽。他身旁站着迈克，如同一个安静的影子。]
+[画面：灯光璀璨的展厅，精英云集。亨利·卡森，西装革革，自信优雅，径直走向玛丽。他身旁站着迈克，如同一个安静的影子。]
 
 **7. 内景 - 庆功派对 - 夜晚**
 
@@ -67,7 +67,12 @@ const parseScript = (script: string): { scene: string; description: string }[] =
     return scenes;
 };
 
-const [apiKey, setApiKey] = useState<string>(() => {
+
+const App: React.FC = () => { // <--- Functional component starts here!
+  const [script, setScript] = useState<string>(SCRIPT_CONTENT);
+
+  // **** MOVE ALL THESE HOOKS AND COMPONENT-LEVEL STATE/FUNCTIONS INSIDE App ****
+  const [apiKey, setApiKey] = useState<string>(() => {
       const envApiKey = import.meta.env.VITE_GOOGLE_AI_STUDIO_API_KEY;
       if (typeof envApiKey === 'string' && envApiKey.length > 0) {
         return envApiKey;
@@ -215,7 +220,7 @@ const [apiKey, setApiKey] = useState<string>(() => {
       </main>
     </div>
   );
-};
+}; // <--- App functional component ends here
 
 const StoryboardCard: React.FC<{ item: StoryboardItem }> = ({ item }) => (
     <div className="bg-gray-800/50 rounded-2xl p-4 shadow-xl border border-gray-700 flex flex-col md:flex-row gap-4">
