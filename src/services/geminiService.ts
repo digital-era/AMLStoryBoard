@@ -1,6 +1,7 @@
 // src/services/geminiService.ts (NO CHANGES needed here, keep it like this)
 import { GoogleGenAI, Modality } from "@google/genai";
 
+
 const getAi = (apiKey: string) => { // Must be string
     return new GoogleGenAI({ apiKey });
 }
